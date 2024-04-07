@@ -2,12 +2,14 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
 
 export const NavBar = () => {
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
-      <Container>
-        <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+      <Container fluid>
+        <Navbar.Brand href="#home">ELF</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
@@ -25,6 +27,21 @@ export const NavBar = () => {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
+          <Form className="d-flex">
+            <Form.Control
+              type="text"
+              placeholder="Username"
+              className="me-2"
+              aria-label="Username"
+            />
+              <Form.Control
+              type="password"
+              placeholder="Password"
+              className="me-2"
+              aria-label="Password"
+            />
+            <Button variant="outline-success">Login</Button>
+          </Form>
         </Navbar.Collapse>
       </Container>
     </Navbar>

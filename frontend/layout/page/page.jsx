@@ -9,7 +9,7 @@ const PageLayout = ({children}) => {
                 <NavBar />
             </div>
 
-            <div>
+            <div className="page-layout-contents">
                 {children}
             </div>
         </div>
