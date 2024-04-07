@@ -12,6 +12,10 @@ const PageLayout = ({children}) => {
             <div className="page-layout-contents">
                 {children}
             </div>
+
+            <div>
+                
+            </div>
         </div>
     )
 }
