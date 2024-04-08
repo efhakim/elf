@@ -1,9 +1,11 @@
-import './App.css'
+import './App.scss'
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 import { Route, Routes } from "react-router-dom"
 
-import Home from '../routes/home/home';
+import Home from './routes/home/home.jsx';
 
 function App() {
 

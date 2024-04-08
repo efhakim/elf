@@ -2,8 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import SignIn from '../signin/signin';
 
 export const NavBar = () => {
   return (
@@ -27,21 +26,9 @@ export const NavBar = () => {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Form className="d-flex">
-            <Form.Control
-              type="text"
-              placeholder="Username"
-              className="me-2"
-              aria-label="Username"
-            />
-              <Form.Control
-              type="password"
-              placeholder="Password"
-              className="me-2"
-              aria-label="Password"
-            />
-            <Button variant="outline-success">Login</Button>
-          </Form>
+
+          <SignIn inline />
+          
         </Navbar.Collapse>
       </Container>
     </Navbar>
