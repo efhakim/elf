@@ -70,10 +70,10 @@ const logInUser = async (req, res, next) => {
 }
 
 const verifyLogin = async (req, res, next) => {
-    const token = req.headers.authorization.split(' ')
+    const token = req.headers.authorization
 
     if(token) {
-        const decoded = jwt.decode(token[0], "cdd50e63-e67e-4a6c-8b58-77de2615c052")
+        const decoded = jwt.decode(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
         try {
             const user = await User.findById(decoded.userId)
             res.status(200).json(user.toObject({getters: true}))

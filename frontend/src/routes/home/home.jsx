@@ -2,7 +2,7 @@ import PageLayout from "../../layout/page/page";
 
 const Home = () => {
     return (
-        <div>test</div>
+        <div>This is a placeholder</div>
     )
 }
 
