@@ -1,0 +1,4 @@
+POST http://localhost:5012/u/isLogged
+content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjE1NjVkNzk3NmE4ZDc3YzA3MWFlNmIiLCJpYXQiOjE3MTI2ODQzMTksImV4cCI6MTcxMjc3MDcxOX0.bdCi6sPAxj-ImZC0IVbIMF4pE5zKuO9LYVoI6fd2dgU
+

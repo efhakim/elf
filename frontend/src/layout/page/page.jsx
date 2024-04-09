@@ -1,6 +1,8 @@
 import NavBar from '../../components/navbar/navbar.jsx'
 import './page.scss'
 
+import { Outlet } from 'react-router-dom'
+
 const PageLayout = ({children}) => {
 
     return (
@@ -10,7 +12,7 @@ const PageLayout = ({children}) => {
             </div>
 
             <div className="page-layout-contents">
-                {children}
+                <Outlet />
             </div>
 
             <div>
