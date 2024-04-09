@@ -11,7 +11,7 @@ import { UserContext } from '../../contexts/user.context.jsx'
 
 export const NavBar = () => {
 
-  const { isLogged, clearUser } = useContext(UserContext)
+  const { isLogged, clearUser, user } = useContext(UserContext)
 
   useEffect(() => {
     console.log(isLogged)
@@ -40,7 +40,13 @@ export const NavBar = () => {
             </NavDropdown>
           </Nav>
 
-          {isLogged ? <p onClick={() => clearUser()}>user</p> : <SignIn inline />}
+          {isLogged ? 
+          <Navbar.Collapse className="justify-content-end">
+            <Navbar.Text>
+              Signed in as: <a href="#login" onClick={() => clearUser()}>{user.name}</a>
+            </Navbar.Text>
+          </Navbar.Collapse> : 
+        <SignIn inline />}
           
         </Navbar.Collapse>
       </Container>

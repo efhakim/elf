@@ -15,7 +15,7 @@ import Page from './layout/page/page.jsx'
 
 function App() {
 
-  const { setCurrentUser, isLogged } = useContext(UserContext)
+  const { setCurrentUser, isLogged, clearUser } = useContext(UserContext)
 
   useEffect(() => {
 
@@ -24,7 +24,10 @@ function App() {
           const getUser = async () => {
               await axios.post('http://localhost:5012/u/isLogged', {}, {headers: {'AUTHORIZATION': localStorage.getItem("token")}})
               .then((res) => setCurrentUser(res.data))
-              .catch((err) => console.log(err))
+              .catch((err) => {
+                console.log(err)
+                clearUser()
+              })
           }
   
           getUser()
