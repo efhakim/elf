@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import SignIn from '../signin/signin';
 
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 
 import { UserContext } from '../../contexts/user.context.jsx'
 
@@ -12,12 +12,7 @@ import { UserContext } from '../../contexts/user.context.jsx'
 export const NavBar = () => {
 
   const { isLogged, clearUser, user } = useContext(UserContext)
-
-  useEffect(() => {
-    console.log(isLogged)
-  }, [isLogged])
   
-
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
@@ -43,7 +38,7 @@ export const NavBar = () => {
           {isLogged ? 
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
-              Signed in as: <a href="#login" onClick={() => clearUser()}>{user.name}</a>
+              Signed in as: <a href="#login">{user.name}</a> | <a href="#login" onClick={() => clearUser()}>Logout</a>
             </Navbar.Text>
           </Navbar.Collapse> : 
         <SignIn inline />}

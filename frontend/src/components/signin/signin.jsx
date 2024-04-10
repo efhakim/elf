@@ -12,7 +12,7 @@ import axios from 'axios'
 
 const SignIn = ({inline}) => {
 
-    const { setCurrentUser, isLogged } = useContext(UserContext)
+    const { setCurrentUser, isLogged, user } = useContext(UserContext)
 
     const {register, handleSubmit, watch, formState: { errors }} = useForm()
     const [loading, setLoading] = useState(false)
@@ -23,6 +23,7 @@ const SignIn = ({inline}) => {
             .then((res) => {
                 localStorage.setItem("token", res.data.token);
                 setCurrentUser(res.data)
+                console.log(user)
             })
             .catch((err) => console.log(err))
         }

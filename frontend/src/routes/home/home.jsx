@@ -1,4 +1,3 @@
-import PageLayout from "../../layout/page/page";
 
 const Home = () => {
     return (

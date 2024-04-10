@@ -10,8 +10,10 @@ import axios from 'axios'
 import { UserContext } from './contexts/user.context.jsx'
 
 
-import Home from './routes/home/home.jsx';
 import Page from './layout/page/page.jsx'
+
+import Home from './routes/home/home.jsx';
+import Profile from './routes/profile/profile.jsx';
 
 function App() {
 
@@ -39,6 +41,8 @@ function App() {
     <Routes>
       <Route element={<Page/>} path="/">
         <Route element ={<Home />} path="/"></Route>
+        <Route element ={<Home />} path="/"></Route>
+        <Route element={<Profile />} path="/u/:uid"></Route>
       </Route>
     </Routes>
   )
