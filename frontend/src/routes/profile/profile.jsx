@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { useParams } from "react-router"
 
 import Form from 'react-bootstrap/Form'
@@ -13,7 +13,6 @@ const Profile = () => {
     const {isLogged, user} = useContext(UserContext)
 
     const {uid} = useParams()
-
 
     const ProfileForm = ({user}) => {
         return (
@@ -37,9 +36,13 @@ const Profile = () => {
         )
     }
 
-
+    if(!localStorage.token) {
+        return (
+            <p>You are not logged in.</p>
+        )
+    }
     if(user) {
-        if(user.uuid != uid) {
+        if(user.username != uid) {
             return (
                 <p>You do not have access to this user.</p>
             )

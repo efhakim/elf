@@ -1,5 +1,7 @@
 const express = require("express")
 const mongoose = require("mongoose")
+const requireAuth = require("./middleware/user.middleware")
+
 
 const userRoutes = require('./routes/user.route')
 
@@ -14,8 +16,10 @@ app.use((req, res, next) => {
     next();
 })
 
-
 app.use('/u', userRoutes)
+
+app.use(requireAuth)
+
 
 app.use((error, req, res, next) => {
     if (res.headerSent) next(error)

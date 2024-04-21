@@ -17,7 +17,7 @@ import Profile from './routes/profile/profile.jsx';
 
 function App() {
 
-  const { setCurrentUser, isLogged, clearUser } = useContext(UserContext)
+  const { setCurrentUser, clearUser } = useContext(UserContext)
 
   useEffect(() => {
 
@@ -25,9 +25,9 @@ function App() {
           
           const getUser = async () => {
               await axios.post('http://localhost:5012/u/isLogged', {}, {headers: {'AUTHORIZATION': localStorage.getItem("token")}})
-              .then((res) => setCurrentUser(res.data))
+              .then((res) => {
+                setCurrentUser(res.data)})
               .catch((err) => {
-                console.log(err)
                 clearUser()
               })
           }
@@ -35,7 +35,7 @@ function App() {
           getUser()
       }
   }, 
-  [isLogged])
+  [])
 
   return (
     <Routes>

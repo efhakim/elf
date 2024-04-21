@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const User = require("../models/user.model")
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs')
 
 const HttpError = require('../models/http.error')
 
@@ -17,21 +17,23 @@ const createUser = async (req, res, next) => {
         return next(error)
     }
 
+    const salt = bcrypt.genSaltSync(10)
+    const hash = bcrypt.hashSync(password, salt)
 
     const newlyCreatedUser = new User({
         name, 
         email,
-        password
+        password: hash
     })
 
     try {
         await newlyCreatedUser.save()
     } catch(err) {
-        const error = new HttpError("Could not find user", 500)
+        const error = new HttpError("Could not create user.", 401)
         return next(error)
     }
 
-    res.status(200).json(newlyCreatedUser.toObject({getters: true}))
+    res.status(200).json({"response": "User Created"})
 }
 
 const getUser = async (req, res, next) => {
@@ -46,7 +48,7 @@ const getUser = async (req, res, next) => {
         return next(error)
     }
     
-    res.status(200).json(searchedUser.toObject({getters: true}))
+    res.status(200).json({"username": searchedUser.name, "email": searchedUser.email, "dateOfCreation": searchedUser.date})
 }
 
 const logInUser = async (req, res, next) => {
@@ -57,26 +59,26 @@ const logInUser = async (req, res, next) => {
         if(!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
         }
-
+        
         const logUser = await User.findOne({ email });
 
         if(!logUser) {
-            const error = new HttpError("User does not exist", 500)
+            const error = new HttpError("User does not exist", 404)
             return next(error)
         }
 
-        if (password != logUser.password) {
-            const error = new HttpError("Wrong password", 500)
+        if (!bcrypt.compareSync(password, logUser.password)) {
+            const error = new HttpError("Wrong password", 401)
             return next(error)
         }
 
         const token = jwt.sign(
-            {userId: logUser.id, username: logUser.username},
+            {userId: logUser.uuid, username: logUser.username},
             "cdd50e63-e67e-4a6c-8b58-77de2615c052",
             {expiresIn: '24h'}
         )
 
-        res.status(200).json({token})
+        res.status(200).json({token, "username": logUser.name, "email": logUser.email})
 
     } catch (err) {
         const error = new HttpError("Database problem", 500)
@@ -86,24 +88,22 @@ const logInUser = async (req, res, next) => {
 
 const verifyLogin = async (req, res, next) => {
     const token = req.headers.authorization
-
+    
     try {
         const de = jwt.verify(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
-        console.log(de)
     } catch(err) {
         const error = new HttpError("Token Expired", 500)
         return next(error)
     }
-
+    
     if(token) {
         const decoded = jwt.decode(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
         try {
-            const user = await User.findById(decoded.userId)
-            res.status(200).json(user.toObject({getters: true}))
+            const user = await User.findOne({uuid: decoded.userId})
+            res.status(200).json({token, "username": user.name, "email": user.email})
         } catch (err) {
             const error = new HttpError("Database problem", 500)
             return next(error)
-    
         }
     } else {
         const error = new HttpError("Database problem", 500)

@@ -40,7 +40,6 @@ export const UserProvider = ({children}) => {
 
     const setCurrentUser = (usr) => {
         dispatch({type: "LOG_USER", payload: usr})
-        console.log(usr)
     }
     
     const clearUser = () => {

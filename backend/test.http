@@ -1,4 +1,4 @@
-POST http://localhost:5012/u/createNewUser
+POST http://localhost:5012/u/logIn
 content-type: application/json
 
-{ "name": "hakim", "email": "h@ecom", "password": "first one"}
+{ "name": "hakim", "email": "halbala", "password": "first ne"}

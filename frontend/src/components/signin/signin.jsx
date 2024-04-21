@@ -23,7 +23,6 @@ const SignIn = ({inline}) => {
             .then((res) => {
                 localStorage.setItem("token", res.data.token);
                 setCurrentUser(res.data)
-                console.log(user)
             })
             .catch((err) => console.log(err))
         }
@@ -55,7 +54,7 @@ const SignIn = ({inline}) => {
             {...register("password")}
             />
             <ButtonGroup>
-                <Button variant="outline-success" type='submit'>Login</Button>
+                <Button variant="outline-success" type='submit' onSubmit={(e) => e.preventDefault}>Login</Button>
                 <Button variant="success">Signup</Button>
             </ButtonGroup>
 
