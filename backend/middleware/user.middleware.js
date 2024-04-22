@@ -6,19 +6,24 @@ const HttpError = require("../models/http.error")
 const requireAuth = async (req, res, next) => {
     const token = req.headers.authorization
 
-    if(!token) {
-        console.log("next")
-        return next()
-    }
     try {
-        decode = jwt.verify(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
-        console.log("now it worked")
-    } catch(err) {
-        const error = new HttpError(err, 500)
-        console.log(error)
-        return next(error)
+      // Verify the token
+      const decoded = jwt.verify(token, 'cdd50e63-e67e-4a6c-8b58-77de2615c052'); // Change 'your_secret_key' to your actual secret key
+  
+      
+      const user = await User.findOne({"uuid": decoded.userId});
+  
+      if (!user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+  
+      req.user = user;
+  
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Invalid token' });
     }
-    return next()
+  
 }
 
 module.exports = requireAuth

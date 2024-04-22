@@ -1,4 +1,5 @@
-POST http://localhost:5012/u/logIn
+POST http://localhost:5012/s/editStorage
 content-type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzNTc5ODNiZi04ZWM5LTRmYmUtOTM5Ny0zNWMzNzVhMGExYWYiLCJpYXQiOjE3MTM4MTQyODAsImV4cCI6MTcxMzkwMDY4MH0.pJ7dutGbL6ZFEmqtjVs02jP7Ja8mw7xKe9Hacr2iIRk
 
-{ "name": "hakim", "email": "halbala", "password": "first ne"}
+{ "name": "Draawer1" }

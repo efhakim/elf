@@ -5,6 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import SignIn from '../signin/signin';
 
 import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 
 import { UserContext } from '../../contexts/user.context.jsx'
 
@@ -20,7 +21,7 @@ export const NavBar = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
+            <Nav.Link><Link to="/">Home</Link></Nav.Link>
             <Nav.Link href="#link">Link</Nav.Link>
             <NavDropdown title="Dropdown" id="basic-nav-dropdown">
               <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -38,7 +39,7 @@ export const NavBar = () => {
           {isLogged ? 
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
-              Signed in as: <a href="#login">{user.name}</a> | <a href="#login" onClick={() => clearUser()}>Logout</a>
+              Signed in as: <Link to={`/u/${user.username}`}>{user.username}</Link> | <a href="#login" onClick={() => clearUser()}>Logout</a>
             </Navbar.Text>
           </Navbar.Collapse> : 
         <SignIn inline />}

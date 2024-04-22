@@ -4,6 +4,7 @@ const requireAuth = require("./middleware/user.middleware")
 
 
 const userRoutes = require('./routes/user.route')
+const storageRoutes = require('./routes/storage.route')
 
 const app = express()
 
@@ -17,8 +18,9 @@ app.use((req, res, next) => {
 })
 
 app.use('/u', userRoutes)
+app.use('/s', storageRoutes)
 
-app.use(requireAuth)
+// app.use(requireAuth)
 
 
 app.use((error, req, res, next) => {
