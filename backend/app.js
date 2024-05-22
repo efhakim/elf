@@ -8,6 +8,8 @@ const storageRoutes = require('./routes/storage.route')
 
 const app = express()
 
+require('dotenv').config()
+
 app.use(express.json())
 
 app.use((req, res, next) => {

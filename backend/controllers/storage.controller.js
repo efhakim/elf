@@ -69,8 +69,11 @@ const editStorage = async (req, res, next) => {
                 if(access) {
                     searchStorage.access = [access, ...searchStorage.access]
                     await searchStorage.save()
-                }
 
+                    res.status(200)
+                }
+                
+                res.status(200)
             } else {
                 throw new HttpError("Can't modify a storage you do not own.", 401)
             }

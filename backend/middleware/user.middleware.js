@@ -8,7 +8,7 @@ const requireAuth = async (req, res, next) => {
 
     try {
       // Verify the token
-      const decoded = jwt.verify(token, 'cdd50e63-e67e-4a6c-8b58-77de2615c052'); // Change 'your_secret_key' to your actual secret key
+      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Change 'your_secret_key' to your actual secret key
   
       
       const user = await User.findOne({"uuid": decoded.userId});

@@ -1,117 +1,157 @@
-const mongoose = require("mongoose")
-const User = require("../models/user.model")
+const mongoose = require('mongoose');
+const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs')
-
-const HttpError = require('../models/http.error')
+const bcrypt = require('bcryptjs');
+const HttpError = require('../models/http.error');
 
 const createUser = async (req, res, next) => {
-    const {name, email, password} = req.body
-
-
-    const user = await User.findOne({email: email})
-
-    if(user) {
-        console.log(user)
-        const error = new HttpError("User already exists", 500)
-        return next(error)
-    }
-
-    const salt = bcrypt.genSaltSync(10)
-    const hash = bcrypt.hashSync(password, salt)
-
-    const newlyCreatedUser = new User({
-        name, 
-        email,
-        password: hash
-    })
+    const { name, email, password } = req.body;
 
     try {
-        await newlyCreatedUser.save()
-    } catch(err) {
-        const error = new HttpError("Could not create user.", 401)
-        return next(error)
-    }
+        const existingUser = await User.findOne({ email });
 
-    res.status(200).json({"response": "User Created"})
-}
+        if (existingUser) {
+            throw new HttpError('User already exists', 400)
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(password, salt);
+
+        const newUser = new User({
+            name,
+            email,
+            password: hash
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: 'User Created' });
+    } catch (err) {
+        next(err)
+    }
+};
 
 const getUser = async (req, res, next) => {
-    const {name} = req.body
-
-    let searchedUser
+    const { name } = req.body;
 
     try {
-        searchedUser = await User.findOne({name: name})
-    } catch(err) {
-        const error = new HttpError("Could not find user", 500)
-        return next(error)
+        const user = await User.findOne({ name });
+
+        if (!user) {
+            throw new HttpError('Could not find user', 404)
+        }
+
+        console.log(user)
+
+        res.status(200).json({
+            username: user.name,
+            email: user.email,
+            creationDate: user.date
+        });
+
+    } catch (err) {
+        next(err);
     }
-    
-    res.status(200).json({"username": searchedUser.name, "email": searchedUser.email, "dateOfCreation": searchedUser.date})
-}
+};
 
 const logInUser = async (req, res, next) => {
+    const { email, password } = req.body;
+
 
     try {
-        const {email, password} = req.body
-
-        if(!email || !password) {
+        if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
         }
-        
-        const logUser = await User.findOne({ email });
 
-        if(!logUser) {
-            const error = new HttpError("User does not exist", 404)
-            return next(error)
+        const user = await User.findOne({ email });
+
+        if (!user || !bcrypt.compareSync(password, user.password)) {
+            throw new HttpError('Invalid email or password', 401)
         }
 
-        if (!bcrypt.compareSync(password, logUser.password)) {
-            const error = new HttpError("Wrong password", 401)
-            return next(error)
+        try {
+            user.lastLogin = Date.now()
+            await user.save()
+        } catch(err) {
+            throw new HttpError("Couldn't save", 500)
         }
 
         const token = jwt.sign(
-            {userId: logUser.uuid, username: logUser.username},
-            "cdd50e63-e67e-4a6c-8b58-77de2615c052",
-            {expiresIn: '24h'}
-        )
+            { userId: user.uuid, username: user.name },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
 
-        res.status(200).json({token, "username": logUser.name, "email": logUser.email})
-
+        res.status(200).json({ token, username: user.name, email: user.email });
     } catch (err) {
-        const error = new HttpError("Database problem", 500)
-        return next(error)
+        next(err);
     }
-}
+};
 
 const verifyLogin = async (req, res, next) => {
-    const token = req.headers.authorization
-    
-    try {
-        const de = jwt.verify(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
-    } catch(err) {
-        const error = new HttpError("Token Expired", 500)
-        return next(error)
-    }
-    
-    if(token) {
-        const decoded = jwt.decode(token, "cdd50e63-e67e-4a6c-8b58-77de2615c052")
-        try {
-            const user = await User.findOne({uuid: decoded.userId})
-            res.status(200).json({token, "username": user.name, "email": user.email})
-        } catch (err) {
-            const error = new HttpError("Database problem", 500)
-            return next(error)
-        }
-    } else {
-        const error = new HttpError("Database problem", 500)
-        return next(error)
-    }
-}
+    const token = req.headers.authorization;
 
-exports.createUser = createUser
-exports.getUser = getUser
-exports.logInUser = logInUser
-exports.verifyLogin = verifyLogin
+    if (!token) {
+        throw new HttpError('Authentication token missing', 401);
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        
+        const user = await User.findOne({uuid: decoded.userId});
+        
+        if (!user) {
+            throw new HttpError('User not found', 404);
+        }
+
+        res.status(200).json({ token, username: user.name, email: user.email });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const editUser = async (req, res, next) => {
+    const token = req.headers.authorization;
+    const { name, email, password } = req.body;
+
+    try {
+
+        if (!token) {
+            throw new HttpError('Authentication token missing', 401);
+        }
+
+        const userToken = jwt.verify(token, process.env.JWT_SECRET)
+        
+        try {
+            const user = await User.findOne({uuid: userToken.userId})
+
+            if(!user) {
+                throw new HttpError("Cannot find user", 404)
+            }
+
+            if (name) user.name = name;
+            if (email) user.email = email;
+            if (password) {
+                const salt = await bcrypt.genSalt(10);
+                const hash = await bcrypt.hash(password, salt);
+                user.password = hash;
+            }
+    
+            await user.save();
+
+            res.status(200).json({ RESULT: user });
+        } catch(err) {
+            throw new HttpError(err.message, err.code)
+        }
+    } catch(err) {
+        next(err)
+    }
+};
+
+module.exports = {
+    createUser,
+    getUser,
+    logInUser,
+    verifyLogin, 
+    editUser
+};
