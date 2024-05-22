@@ -129,8 +129,24 @@ const editUser = async (req, res, next) => {
                 throw new HttpError("Cannot find user", 404)
             }
 
-            if (name) user.name = name;
-            if (email) user.email = email;
+            if (name) {
+                if(name == user.name) {
+                    throw new HttpError("This is already your username", 403)
+                }
+                else {
+                    user.name = name
+                }
+            }
+            if (email) {
+                const findEmail = await User.findOne({ email })
+                
+                
+                if (findEmail) {
+                    throw new HttpError("This email is being used already", 403)
+                } else {
+                    user.email = email;
+                }
+            }
             if (password) {
                 const salt = await bcrypt.genSalt(10);
                 const hash = await bcrypt.hash(password, salt);
